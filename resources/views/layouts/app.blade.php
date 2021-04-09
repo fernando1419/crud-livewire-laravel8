@@ -19,6 +19,8 @@
 
    <!-- Scripts -->
    <script src="{{ mix('js/app.js') }}" defer></script>
+   <script src="//cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
 </head>
 
 <body class="font-sans antialiased">
@@ -45,6 +47,17 @@
    @stack('modals')
 
    @livewireScripts
+
+   <script>
+      Livewire.on('alertDialog', function(message) {
+         Swal.fire({
+            icon: 'success',
+            title: message,
+            showConfirmButton: true,
+         })
+      });
+
+   </script>
 </body>
 
 </html>

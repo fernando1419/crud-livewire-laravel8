@@ -1,0 +1,31 @@
+<?php
+
+namespace App\Http\Livewire;
+
+use App\Models\Post;
+use Livewire\Component;
+
+class CreatePost extends Component
+{
+   public $open = false;
+   public $title;
+   public $content;
+
+   public function render()
+   {
+      return view('livewire.create-post');
+   }
+
+   public function save()
+   {
+      Post::create([
+         'title'   => $this->title,
+         'content' => $this->content
+      ]);
+
+      $this->reset(['open', 'title', 'content']);
+
+      $this->emitTo('show-posts', 'renderPostList'); // wiill emit renderPostList only for show-posts component to listen.
+      $this->emit('alertDialog', 'The post has been created successfully!');
+   }
+}

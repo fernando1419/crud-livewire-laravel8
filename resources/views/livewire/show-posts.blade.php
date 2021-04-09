@@ -1,9 +1,10 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
    {{-- {{ $search }} --}}
    <x-table>
-      <div class="py-4 px-6">
+      <div class="py-4 px-6 flex items-center">
          {{-- <input type="text" wire:model="search"> --}}
-         <x-jet-input type="text" class="w-full" placeholder="Enter text to search" wire:model="search" />
+         <x-jet-input type="text" class="flex-1 mr-4" placeholder="Enter text to search" wire:model="search" />
+         @livewire('create-post')
       </div>
 
       @if ($posts->count())
@@ -11,7 +12,7 @@
             <thead class="bg-gray-50">
                <tr>
                   <th scope="col"
-                     class="px-5 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
+                     class="w-24 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer"
                      wire:click="order('id')">
                      ID
                      @if ($sort == 'id')

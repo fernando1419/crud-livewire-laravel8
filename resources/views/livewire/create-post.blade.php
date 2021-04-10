@@ -25,7 +25,10 @@
 
       <x-slot name="footer">
          <x-jet-secondary-button wire:click="$set('open', false)">Cancel</x-jet-secondary-button>
-         <x-jet-danger-button wire:click="save">Create</x-jet-danger-button>
+         <x-jet-danger-button wire:click="save" wire:loading.attr="disabled" wire:target="save">
+            Create
+         </x-jet-danger-button>
+         {{-- <span wire:loading wire:target="save">Saving...</span> --}}
       </x-slot>
    </x-jet-dialog-modal>
 </div>

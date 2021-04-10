@@ -11,6 +11,16 @@ class CreatePost extends Component
    public $title;
    public $content;
 
+   protected $rules = [
+      'title'   => 'required|max:20',
+      'content' => 'required|min:100'
+   ];
+
+   public function updated($property) // runs each time a control is modified, remove "refer"
+   {
+      $this->validateOnly($property);
+   }
+
    public function render()
    {
       return view('livewire.create-post');
@@ -18,6 +28,8 @@ class CreatePost extends Component
 
    public function save()
    {
+      $this->validate();
+
       Post::create([
          'title'   => $this->title,
          'content' => $this->content

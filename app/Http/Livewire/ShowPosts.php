@@ -4,36 +4,77 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use Livewire\Component;
+use Illuminate\Support\Facades\Storage;
 
 class ShowPosts extends Component
 {
-   public $search;
-   public $sort      = 'id';
-   public $direction = 'desc';
+	public $search;
+	public $sort      = 'id';
+	public $direction = 'desc';
+	public $post;
+	public $open_edit = false;
+	public $image;
+	public $imageId;
 
-   protected $listeners = ['renderPostList' => 'render'];
+	protected $rules = [
+		'post.title'   => 'required',
+		'post.content' => 'required'
+	];
 
-   public function render()
-   {
-      $posts = Post::where('title', 'like', '%' . $this->search . '%')
+	protected $listeners = ['renderPostList' => 'render'];
+
+	public function mount()
+	{
+		$this->imageId = rand(); // used to reset image path of input control.
+		$this->post    = new Post();
+	}
+
+	public function render()
+	{
+		$posts = Post::where('title', 'like', '%' . $this->search . '%')
    ->orWhere('content', 'like', '%' . $this->search . '%')
    ->orderBy($this->sort, $this->direction)
    ->get();
 
-      return view('livewire.show-posts', compact('posts'));
-   }
+		return view('livewire.show-posts', compact('posts'));
+	}
 
-   public function order($sortField)
-   {
-      if ($this->sort == $sortField) {
-         if ($this->direction == 'desc') {
-            $this->direction = 'asc';
-         } else {
-            $this->direction = 'desc';
-         }
-      } else {
-         $this->sort      = $sortField;
-         $this->direction = 'asc';
-      }
-   }
+	public function order($sortField)
+	{
+		if ($this->sort == $sortField) {
+			if ($this->direction == 'desc') {
+				$this->direction = 'asc';
+			} else {
+				$this->direction = 'desc';
+			}
+		} else {
+			$this->sort      = $sortField;
+			$this->direction = 'asc';
+		}
+	}
+
+	public function edit(Post $post)
+	{
+		$this->post      = $post;
+		$this->open_edit = true;
+	}
+
+	public function update()
+	{
+		$this->validate();
+
+		if ($this->image) { // if selected image.
+			Storage::delete([$this->post->image]);
+
+			$this->post->image = $this->image->store('posts');
+		}
+
+		$this->post->save();
+
+		$this->reset(['open_edit', 'image']);
+
+		$this->imageId = rand(); // used to reset image path of input control.
+
+		$this->emit('alertDialog', 'The post has been updated successfully!');
+	}
 }

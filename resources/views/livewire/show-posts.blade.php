@@ -90,6 +90,13 @@
             No results for your search criteria.
          </div>
       @endif
+
+      @if ($posts->hasPages())
+         <div class="px-6 py-3">
+            {{ $posts->links() }}
+         </div>
+      @endif
+      
    </x-table>
 
    <x-jet-dialog-modal wire:model="open_edit">

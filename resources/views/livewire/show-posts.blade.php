@@ -3,7 +3,17 @@
    <x-table>
       <div class="py-4 px-6 flex items-center">
          {{-- <input type="text" wire:model="search"> --}}
-         <x-jet-input type="text" class="flex-1 mr-4" placeholder="Enter text to search" wire:model="search" />
+         <div class="flex items-center">
+            <span> Mostrar </span>
+            <select wire:model="quantity" class="mx-2">
+               <option value="10">10</option>
+               <option value="25">25</option>
+               <option value="50">50</option>
+               <option value="100">100</option>
+            </select>
+            <span> Entradas </span>
+         </div>
+         <x-jet-input type="text" class="flex-1 mx-4" placeholder="Enter text to search" wire:model="search" />
          @livewire('create-post')
       </div>
 

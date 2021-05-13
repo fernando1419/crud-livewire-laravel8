@@ -1,4 +1,4 @@
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" wire:init="loadPosts">
    {{-- {{ $search }} --}}
    <x-table>
       <div class="py-4 px-6 flex items-center">
@@ -17,7 +17,7 @@
          @livewire('create-post')
       </div>
 
-      @if ($posts->count())
+      @if (count($posts))
          <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
                <tr>
@@ -95,18 +95,21 @@
                @endforeach
             </tbody>
          </table>
+
+         @if ($posts->hasPages())
+            <div class="px-6 py-3">
+               {{ $posts->links() }}
+            </div>
+         @endif
+
       @else
+
          <div class="py-4 px-6">
             No results for your search criteria.
          </div>
+
       @endif
 
-      @if ($posts->hasPages())
-         <div class="px-6 py-3">
-            {{ $posts->links() }}
-         </div>
-      @endif
-      
    </x-table>
 
    <x-jet-dialog-modal wire:model="open_edit">

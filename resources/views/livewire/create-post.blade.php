@@ -32,11 +32,15 @@
             <x-jet-input type="text" class="w-full" wire:model="title" />
             <x-jet-input-error for="title" />
          </div>
-         <div class="mb-4">
+
+         {{-- {{ $content }} --}}
+
+         <div class="mb-4" wire:ignore>
             <x-jet-label value="Post Content" />
             <textarea rows="5"
                class="border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
-               wire:model="content">
+               wire:model="content"
+               id="editor">
             </textarea>
             <x-jet-input-error for="content" />
          </div>
@@ -56,4 +60,22 @@
          {{-- <span wire:loading wire:target="save">Saving...</span> --}}
       </x-slot>
    </x-jet-dialog-modal>
+
+   @push('js')
+      <script src="https://cdn.ckeditor.com/ckeditor5/27.1.0/classic/ckeditor.js"></script>
+      
+      <script>
+         ClassicEditor
+            .create( document.querySelector( '#editor' ) )
+            .then(editor => {
+               editor.model.document.on('change:data', () => {
+                  @this.set('content', editor.getData());
+               })
+            })
+            .catch( error => {
+                  console.error( error );
+            } );
+      </script>
+   @endpush
+
 </div>

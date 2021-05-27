@@ -6,7 +6,10 @@ services:
     image: my-images/php73-fpm-alpine:0.1
     restart: always
     volumes:
-      - /home/docker/projects/15_crud_livewire_laravel8:/usr/share/nginx/html
+      # Docker toolbox + VirtualBox
+      # - /home/docker/projects/15_crud_livewire_laravel8:/usr/share/nginx/html
+      # Docker desktop + WSL2
+      - ../:/usr/share/nginx/html
     networks:
       - backEnd-network
 
@@ -15,7 +18,7 @@ services:
     env_file: .env
     image: my-images/nginx117-alpine:0.1
     volumes:
-      - /home/docker/projects/15_crud_livewire_laravel8:/usr/share/nginx/html
+      - ../:/usr/share/nginx/html
     ports:
       - ${PROJECT_PORT}:${PORT}
     networks:

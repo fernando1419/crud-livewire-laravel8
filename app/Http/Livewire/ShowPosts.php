@@ -10,98 +10,103 @@ use Livewire\WithPagination;
 
 class ShowPosts extends Component
 {
-   use WithFileUploads, WithPagination;
+	use WithFileUploads, WithPagination;
 
-   public $search    = '';
-   public $sort      = 'id';
-   public $direction = 'desc';
-   public $post;
-   public $open_edit = false;
-   public $image;
-   public $imageId;
-   public $quantity  = '10';
-   public $isLoading = false;
+	public $search    = '';
+	public $sort      = 'id';
+	public $direction = 'desc';
+	public $post;
+	public $open_edit = false;
+	public $image;
+	public $imageId;
+	public $quantity  = '10';
+	public $isLoading = false;
 
-   protected $queryString = [
-      'quantity'  => ['except' => '10'],
-      'sort'      => ['except' => 'id'],
-      'direction' => ['except' => 'desc'],
-      'search'    => ['except' => '']
-   ];
+	protected $listeners = ['renderPostList' => 'render', 'delete'];
 
-   protected $rules = [
-      'post.title'   => 'required',
-      'post.content' => 'required'
-   ];
+	protected $queryString = [
+		'quantity'  => ['except' => '10'],
+		'sort'      => ['except' => 'id'],
+		'direction' => ['except' => 'desc'],
+		'search'    => ['except' => '']
+	];
 
-   protected $listeners = ['renderPostList' => 'render'];
+	protected $rules = [
+		'post.title'   => 'required',
+		'post.content' => 'required'
+	];
 
-   public function mount()
-   {
-      $this->imageId = rand(); // used to reset image path of input control.
-      $this->post    = new Post();
-   }
+	public function mount()
+	{
+		$this->imageId = rand(); // used to reset image path of input control.
+		$this->post    = new Post();
+	}
 
-   public function updatingSearch()
-   {
-      $this->resetPage();
-   }
+	public function updatingSearch()
+	{
+		$this->resetPage();
+	}
 
-   public function loadPosts()
-   {
-      $this->isLoading = true;
-   }
+	public function loadPosts()
+	{
+		$this->isLoading = true;
+	}
 
-   public function render()
-   {
-      if ($this->isLoading) {
-         $posts = Post::where('title', 'like', '%' . $this->search . '%')
-      ->orWhere('content', 'like', '%' . $this->search . '%')
-      ->orderBy($this->sort, $this->direction)
-      ->paginate($this->quantity);
-      } else {
-         $posts = [];
-      }
+	public function render()
+	{
+		if ($this->isLoading) {
+			$posts = Post::where('title', 'like', '%' . $this->search . '%')
+	  ->orWhere('content', 'like', '%' . $this->search . '%')
+	  ->orderBy($this->sort, $this->direction)
+	  ->paginate($this->quantity);
+		} else {
+			$posts = [];
+		}
 
-      return view('livewire.show-posts', compact('posts'));
-   }
+		return view('livewire.show-posts', compact('posts'));
+	}
 
-   public function order($sortField)
-   {
-      if ($this->sort == $sortField) {
-         if ($this->direction == 'desc') {
-            $this->direction = 'asc';
-         } else {
-            $this->direction = 'desc';
-         }
-      } else {
-         $this->sort      = $sortField;
-         $this->direction = 'asc';
-      }
-   }
+	public function order($sortField)
+	{
+		if ($this->sort == $sortField) {
+			if ($this->direction == 'desc') {
+				$this->direction = 'asc';
+			} else {
+				$this->direction = 'desc';
+			}
+		} else {
+			$this->sort      = $sortField;
+			$this->direction = 'asc';
+		}
+	}
 
-   public function edit(Post $post)
-   {
-      $this->post      = $post;
-      $this->open_edit = true;
-   }
+	public function edit(Post $post)
+	{
+		$this->post      = $post;
+		$this->open_edit = true;
+	}
 
-   public function update()
-   {
-      $this->validate();
+	public function update()
+	{
+		$this->validate();
 
-      if ($this->image) { // if selected image.
-         Storage::delete([$this->post->image]);
+		if ($this->image) { // if selected image.
+			Storage::delete([$this->post->image]);
 
-         $this->post->image = $this->image->store('posts');
-      }
+			$this->post->image = $this->image->store('posts');
+		}
 
-      $this->post->save();
+		$this->post->save();
 
-      $this->reset(['open_edit', 'image']);
+		$this->reset(['open_edit', 'image']);
 
-      $this->imageId = rand(); // used to reset image path of input control.
+		$this->imageId = rand(); // used to reset image path of input control.
 
-      $this->emit('alertDialog', 'The post has been updated successfully!');
-   }
+		$this->emit('alertDialog', 'The post has been updated successfully!');
+	}
+
+	public function delete(Post $post)
+	{
+		$post->delete();
+	}
 }

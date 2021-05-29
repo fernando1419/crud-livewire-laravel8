@@ -83,13 +83,19 @@
                      <td class="px-6 py-4 text-sm text-gray-500">
                         {{ $item->content }}
                      </td>
-                     <td class="px-6 py-4 text-sm font-medium">
+                     <td class="px-6 py-4 text-sm font-medium flex">
                         {{-- <a href="#" class="text-indigo-600 hover:text-indigo-900">Edit</a> --}}
                         {{-- @livewire('edit-post', ['post' => $post], key($post->id)) --}}
                         <a class="font-bold text-white py-2 px-3 rounded cursor-pointer bg-green-600 hover:bg-green-500"
                            wire:click="edit({{ $item }})">
                            <i class="fas fa-edit"></i>
                         </a>
+
+                        <a class="font-bold text-white py-2 px-3 rounded cursor-pointer bg-red-600 hover:bg-red-500 ml-2"
+                           wire:click="$emit('deletePost', {{ $item->id }})">
+                           <i class="fas fa-trash"></i>
+                        </a>
+
                      </td>
                   </tr>
                @endforeach
@@ -161,4 +167,33 @@
          </x-jet-danger-button>
       </x-slot>
    </x-jet-dialog-modal>
+
+   @push('js') 
+      <script src="https://cdn.ckeditor.com/ckeditor5/27.1.0/classic/ckeditor.js"></script>
+   
+      <script>
+         Livewire.on('deletePost', postId => {
+            Swal.fire({
+               title: 'Are you sure?',
+               text: "You won't be able to revert this!",
+               icon: 'warning',
+               showCancelButton: true,
+               confirmButtonColor: '#3085d6',
+               cancelButtonColor: '#d33',
+               confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+               if (result.isConfirmed) {
+                  
+                  Livewire.emitTo('show-posts', 'delete', postId);
+                  
+                  Swal.fire(
+                     'Deleted!',
+                     'Your file has been deleted.',
+                     'success'
+                  )
+               }
+            })
+         })
+      </script>
+   @endpush
 </div>
